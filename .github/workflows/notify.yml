@@ -1,0 +1,32 @@
+name: Soart notifications
+
+on:
+  schedule:
+    - cron: "7 * * * *"   # every hour, 7 minutes past
+  workflow_dispatch:
+    inputs:
+      force_digest:
+        description: "Send the daily briefing now (for testing)"
+        type: boolean
+        default: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install
+        working-directory: notifier
+        run: npm install --no-audit --no-fund
+      - name: Send notifications
+        working-directory: notifier
+        run: node send.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          VAPID_PUBLIC: ${{ secrets.VAPID_PUBLIC }}
+          VAPID_PRIVATE: ${{ secrets.VAPID_PRIVATE }}
+          FORCE_DIGEST: ${{ github.event.inputs.force_digest }}
