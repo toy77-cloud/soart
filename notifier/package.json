@@ -1,0 +1,10 @@
+{
+  "name": "soart-notifier",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "web-push": "^3.6.7",
+    "node-ical": "^0.18.0"
+  }
+}

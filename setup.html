@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soart setup: notification keys</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="auth"><div class="box" style="width:min(640px,100%)">
+  <h1>Notification keys</h1>
+  <p class="muted" style="margin:0">These two keys let your GitHub job send notifications to your phone. They're created right here in your browser and never sent anywhere. Generate them once.</p>
+  <button class="btn primary" id="gen" style="align-self:flex-start">Generate keys</button>
+  <div id="out" style="display:none;flex-direction:column;gap:14px">
+    <div class="card">
+      <h2>Public key</h2>
+      <p class="muted small" style="margin:0">Paste into <span class="num">firebase-config.js</span> as VAPID_PUBLIC_KEY, and into a GitHub secret named <span class="num">VAPID_PUBLIC</span>.</p>
+      <textarea id="pub" readonly style="font-family:var(--mono);font-size:12px;min-height:70px"></textarea>
+      <button class="btn sm" data-copy="pub" style="align-self:flex-start">Copy public key</button>
+    </div>
+    <div class="card" style="border-color:var(--bad)">
+      <h2>Private key: keep secret</h2>
+      <p class="muted small" style="margin:0">Paste ONLY into a GitHub secret named <span class="num">VAPID_PRIVATE</span>. Never put it in a file in your repo.</p>
+      <textarea id="priv" readonly style="font-family:var(--mono);font-size:12px;min-height:50px"></textarea>
+      <button class="btn sm" data-copy="priv" style="align-self:flex-start">Copy private key</button>
+    </div>
+  </div>
+</div></div>
+<script>
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+document.getElementById("gen").onclick = async () => {
+  const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const pub = await crypto.subtle.exportKey("raw", kp.publicKey);
+  const jwk = await crypto.subtle.exportKey("jwk", kp.privateKey);
+  document.getElementById("pub").value = b64u(pub);
+  document.getElementById("priv").value = jwk.d;
+  document.getElementById("out").style.display = "flex";
+  document.getElementById("gen").textContent = "Generate new keys";
+};
+document.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+  const t = document.getElementById(b.dataset.copy);
+  try { await navigator.clipboard.writeText(t.value); b.textContent = "Copied"; } catch (e) { t.select(); }
+});
+</script>
+</body>
+</html>

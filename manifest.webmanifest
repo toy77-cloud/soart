@@ -1,0 +1,20 @@
+{
+  "name": "Soart",
+  "short_name": "Soart",
+  "description": "Tasks, school, calendar, fitness, money, lists and goals in one place.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F5F6F8",
+  "theme_color": "#0D1117",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Today", "url": "./#today" },
+    { "name": "School", "url": "./#school" },
+    { "name": "Log a set", "url": "./#fitness" }
+  ]
+}
